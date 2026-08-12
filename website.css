@@ -1,0 +1,46 @@
+:root{
+    --no-margin:0 auto;
+    --position-center:center;
+    --size-thing:50px;
+    --text-color:cyan;
+    --box-color:lightgreen;
+}
+
+body{
+    background-color: rgb(0, 5, 82);
+}
+
+.InputName{
+    text-align: var(--position-center);
+    color: var(--text-color);
+    font-size: var(--size-thing);
+    display: block;
+}
+
+.DataName{
+    margin: 0 auto;
+    background-color: var(--box-color);
+    font-size: var(--size-thing);
+     display: flex;
+}
+
+.Submit{
+    display: flex;
+    margin: 0 auto;
+    font-size: var(--size-thing);
+    color: red;
+    transition: all 0.3;
+    cursor: pointer;
+}
+
+.Submit:hover{
+    text-shadow: 0 0 20px rgb(4, 0, 255), 0 0 30px cyan;
+}
+
+.Result {
+    font-size: var(--size-thing);
+    color: var(--text-color);
+    display: flex;
+    justify-content: center;
+    text-shadow: 0 0 10px white,0 0 20px rgb(93, 171, 235);
+}
