@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <base target="_top">
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        padding: 20px;
+        background-color: #f4f6f9;
+        color: #333;
+      }
+      .card {
+        background: #ffffff;
+        border-radius: 8px;
+        padding: 16px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      }
+      .field {
+        margin-bottom: 12px;
+      }
+      .label {
+        font-size: 12px;
+        color: #666;
+        text-transform: uppercase;
+        font-weight: bold;
+      }
+      .value {
+        font-size: 16px;
+        font-weight: 600;
+        margin-top: 2px;
+      }
+      #loading {
+        font-style: italic;
+        color: #888;
+      }
+    </style>
+  </head>
+  <body>
+
+    <div id="loading">Loading data from sheet...</div>
+
+    <div class="card" id="profileCard" style="display: none;">
+      <div class="field">
+        <div class="label">Name</div>
+        <div class="value" id="userName">-</div>
+      </div>
+      <div class="field">
+        <div class="label">Rank</div>
+        <div class="value" id="userRank">-</div>
+      </div>
+      <div class="field">
+        <div class="label">Balance</div>
+        <div class="value" id="userBal">-</div>
+      </div>
+    </div>
+
+    <script>
+      // Automatically fetch sheet data when HTML loads
+      window.onload = function() {
+        google.script.run
+          .withSuccessHandler(renderData)
+          .getSheetData();
+      };
+
+      // Populate HTML elements with returned Google Sheet values
+      function renderData(data) {
+        document.getElementById('userName').textContent = data.name;
+        document.getElementById('userRank').textContent = data.rank;
+        document.getElementById('userBal').textContent = '$' + data.bal;
+
+        document.getElementById('loading').style.display = 'none';
+        document.getElementById('profileCard').style.display = 'block';
+      }
+    </script>
+  </body>
+</html>
