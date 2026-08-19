@@ -14,19 +14,23 @@
       min-height: 100vh;
     }
 
+    /* Narrow, poem-like centered container */
     .card {
       background: #ffffff;
-      padding: 30px 40px;
+      padding: 35px 30px;
       border-radius: 12px;
-      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
       text-align: center;
-      width: 300px;
+      width: 100%;
+      max-width: 260px; /* Kept narrow so it doesn't stretch side to side */
+      margin: 0 auto;
     }
 
     h2 {
       margin-top: 0;
       color: #333;
       margin-bottom: 20px;
+      font-size: 20px;
     }
 
     input, button {
@@ -36,6 +40,7 @@
       font-size: 15px;
       border-radius: 6px;
       box-sizing: border-box;
+      text-align: center; /* Centers the input text */
     }
 
     input {
@@ -62,24 +67,35 @@
       background-color: #218838;
     }
 
-    #status {
+    #status, #pinStatus {
       margin-top: 15px;
       font-size: 14px;
       font-weight: 500;
+    }
+
+    /* Utility class to hide elements */
+    .hidden {
+      display: none !important;
     }
   </style>
 </head>
 <body>
 
-  <div class="card">
+  <!-- 1. PIN CODE SCREEN (Shows First) -->
+  <div class="card" id="pinCard">
+    <h2>Enter Access PIN</h2>
+    <input type="password" id="pinInput" placeholder="Enter PIN">
+    <button onclick="checkPin()">Unlock</button>
+    <p id="pinStatus"></p>
+  </div>
+
+  <!-- 2. REGISTRATION FORM (Hidden Until PIN is Correct) -->
+  <div class="card hidden" id="regCard">
     <h2>User Registration</h2>
     
     <input type="text" id="nameInput" placeholder="Enter Name">
     <input type="text" id="rankInput" placeholder="Enter Rank">
     <input type="number" id="balInput" placeholder="Enter Balance">
-    
-    <!-- Passcode Field -->
-    <input type="password" id="passcodeInput" placeholder="Enter Passcode">
     
     <button onclick="sendData()">Send to Sheet</button>
 
@@ -90,32 +106,39 @@
     // PASTE YOUR GOOGLE WEB APP URL HERE
     const API_URL = "https://script.google.com/macros/s/AKfycbwkXAasX7tgoTxVO09FQpBF3WzvBid05r1NA1-pyC-eQZMbeJYzKILEyULM3d73zNKh/exec";
     
-    // SECRET PASSCODE
-    const CORRECT_PASSCODE = "04292008";
+    // SECRET PIN
+    const CORRECT_PIN = "04292008";
 
-    function sendData() {
-      const nameInput     = document.getElementById("nameInput");
-      const rankInput     = document.getElementById("rankInput");
-      const balInput      = document.getElementById("balInput");
-      const passcodeInput = document.getElementById("passcodeInput");
-      
-      const nameValue     = nameInput.value.trim();
-      const rankValue     = rankInput.value.trim();
-      const balValue      = balInput.value.trim();
-      const passcodeValue = passcodeInput.value.trim();
-      
-      const statusText    = document.getElementById("status");
+    // FUNCTION TO CHECK PIN
+    function checkPin() {
+      const pinInput = document.getElementById("pinInput");
+      const pinStatus = document.getElementById("pinStatus");
 
-      // 1. Check if fields are empty
-      if (!nameValue || !rankValue || !balValue || !passcodeValue) {
-        statusText.textContent = "Please fill in all fields!";
-        statusText.style.color = "red";
-        return;
+      if (pinInput.value.trim() === CORRECT_PIN) {
+        // Hide PIN screen & show registration form
+        document.getElementById("pinCard").classList.add("hidden");
+        document.getElementById("regCard").classList.remove("hidden");
+      } else {
+        pinStatus.textContent = "Incorrect PIN!";
+        pinStatus.style.color = "red";
+        pinInput.value = "";
       }
+    }
 
-      // 2. Check passcode
-      if (passcodeValue !== CORRECT_PASSCODE) {
-        statusText.textContent = "Incorrect Passcode!";
+    // FUNCTION TO SEND DATA TO GOOGLE SHEET
+    function sendData() {
+      const nameInput = document.getElementById("nameInput");
+      const rankInput = document.getElementById("rankInput");
+      const balInput  = document.getElementById("balInput");
+      
+      const nameValue = nameInput.value.trim();
+      const rankValue = rankInput.value.trim();
+      const balValue  = balInput.value.trim();
+      
+      const statusText = document.getElementById("status");
+
+      if (!nameValue || !rankValue || !balValue) {
+        statusText.textContent = "Please fill in all fields!";
         statusText.style.color = "red";
         return;
       }
@@ -137,11 +160,10 @@
         statusText.textContent = "Submitted successfully!";
         statusText.style.color = "green";
         
-        // Clear all inputs
+        // Clear inputs
         nameInput.value = "";
         rankInput.value = "";
         balInput.value = "";
-        passcodeInput.value = "";
       })
       .catch(err => {
         statusText.textContent = "Error sending data.";
