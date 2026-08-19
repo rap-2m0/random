@@ -1,10 +1,8 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>SERAPHYX PORTAL</title>
+  <title>User Registration</title>
   <style>
-<style>
-    /* Reset margins and center everything on the screen */
     body {
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
       background-color: #f4f6f9;
@@ -16,7 +14,6 @@
       min-height: 100vh;
     }
 
-    /* Styled Card Container */
     .card {
       background: #ffffff;
       padding: 30px 40px;
@@ -32,7 +29,6 @@
       margin-bottom: 20px;
     }
 
-    /* Inputs and Button Styling */
     input, button {
       width: 100%;
       padding: 12px;
@@ -75,39 +71,57 @@
 </head>
 <body>
 
-  <h2>User Registration</h2>
-  
-  <input type="text" id="nameInput" placeholder="Enter Name">
-  <input type="text" id="rankInput" placeholder="Enter Rank">
-  <input type="number" id="balInput" placeholder="Enter Balance">
-  
-  <button onclick="sendData()">Send to Sheet</button>
+  <div class="card">
+    <h2>User Registration</h2>
+    
+    <input type="text" id="nameInput" placeholder="Enter Name">
+    <input type="text" id="rankInput" placeholder="Enter Rank">
+    <input type="number" id="balInput" placeholder="Enter Balance">
+    
+    <!-- Passcode Field -->
+    <input type="password" id="passcodeInput" placeholder="Enter Passcode">
+    
+    <button onclick="sendData()">Send to Sheet</button>
 
-  <p id="status"></p>
+    <p id="status"></p>
+  </div>
 
   <script>
     // PASTE YOUR GOOGLE WEB APP URL HERE
     const API_URL = "https://script.google.com/macros/s/AKfycbwkXAasX7tgoTxVO09FQpBF3WzvBid05r1NA1-pyC-eQZMbeJYzKILEyULM3d73zNKh/exec";
+    
+    // SECRET PASSCODE
+    const CORRECT_PASSCODE = "04292008";
 
     function sendData() {
-      const nameInput = document.getElementById("nameInput");
-      const rankInput = document.getElementById("rankInput");
-      const balInput  = document.getElementById("balInput");
+      const nameInput     = document.getElementById("nameInput");
+      const rankInput     = document.getElementById("rankInput");
+      const balInput      = document.getElementById("balInput");
+      const passcodeInput = document.getElementById("passcodeInput");
       
-      const nameValue = nameInput.value.trim();
-      const rankValue = rankInput.value.trim();
-      const balValue  = balInput.value.trim();
+      const nameValue     = nameInput.value.trim();
+      const rankValue     = rankInput.value.trim();
+      const balValue      = balInput.value.trim();
+      const passcodeValue = passcodeInput.value.trim();
       
-      const statusText = document.getElementById("status");
+      const statusText    = document.getElementById("status");
 
-      if (!nameValue || !rankValue || !balValue) {
+      // 1. Check if fields are empty
+      if (!nameValue || !rankValue || !balValue || !passcodeValue) {
         statusText.textContent = "Please fill in all fields!";
         statusText.style.color = "red";
         return;
       }
 
+      // 2. Check passcode
+      if (passcodeValue !== CORRECT_PASSCODE) {
+        statusText.textContent = "Incorrect Passcode!";
+        statusText.style.color = "red";
+        return;
+      }
+
       statusText.textContent = "Sending...";
-      statusText.style.color = "black";
+      statusText.style.color = "#555";
 
       const formData = new FormData();
       formData.append("name", nameValue);
@@ -123,10 +137,11 @@
         statusText.textContent = "Submitted successfully!";
         statusText.style.color = "green";
         
-        // Clear inputs
+        // Clear all inputs
         nameInput.value = "";
         rankInput.value = "";
         balInput.value = "";
+        passcodeInput.value = "";
       })
       .catch(err => {
         statusText.textContent = "Error sending data.";
