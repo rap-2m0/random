@@ -19,24 +19,32 @@
 
     <script>
       // REPLACE THIS WITH YOUR DEPLOYED WEB APP URL
-      const API_URL = "https://script.google.com/macros/s/AKfycbxlbfjPRHDDcn71cixgmgR6-dGT52HwJQoHxAxKYuRoxqiegzDNCqeE2wvn6ny8YM31/exec";
+     const API_URL = "https://script.google.com/macros/s/AKfycbxlbfjPRHDDcn71cixgmgR6-dGT52HwJQoHxAxKYuRoxqiegzDNCqeE2wvn6ny8YM31/exec";
 
-      window.onload = function() {
-        fetch(API_URL)
-          .then(response => response.json())
-          .then(data => {
-            document.getElementById('userName').textContent = data.name;
-            document.getElementById('userRank').textContent = data.rank;
-            document.getElementById('userBal').textContent = data.bal;
+window.onload = function() {
+  fetch(API_URL, {
+    method: "GET",
+    redirect: "follow" // Forces the browser to follow Google's redirect
+  })
+    .then(response => {
+      if (!response.ok) {
+        throw new Error("Network response was not ok: " + response.statusText);
+      }
+      return response.json();
+    })
+    .then(data => {
+      document.getElementById('userName').textContent = data.name;
+      document.getElementById('userRank').textContent = data.rank;
+      document.getElementById('userBal').textContent = data.bal;
 
-            document.getElementById('loading').style.display = 'none';
-            document.getElementById('profileCard').style.display = 'block';
-          })
-          .catch(error => {
-            document.getElementById('loading').textContent = "Failed to load data.";
-            console.error("Error fetching data:", error);
-          });
-      };
+      document.getElementById('loading').style.display = 'none';
+      document.getElementById('profileCard').style.display = 'block';
+    })
+    .catch(error => {
+      document.getElementById('loading').textContent = "Failed to load data. Check browser console (F12) for details.";
+      console.error("Error fetching data:", error);
+    });
+};
     </script>
   </body>
 </html>
