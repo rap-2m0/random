@@ -1,76 +1,42 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <base target="_top">
+    <title>Sheet Data on GitHub</title>
     <style>
-      body {
-        font-family: Arial, sans-serif;
-        padding: 20px;
-        background-color: #f4f6f9;
-        color: #333;
-      }
-      .card {
-        background: #ffffff;
-        border-radius: 8px;
-        padding: 16px;
-        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-      }
-      .field {
-        margin-bottom: 12px;
-      }
-      .label {
-        font-size: 12px;
-        color: #666;
-        text-transform: uppercase;
-        font-weight: bold;
-      }
-      .value {
-        font-size: 16px;
-        font-weight: 600;
-        margin-top: 2px;
-      }
-      #loading {
-        font-style: italic;
-        color: #888;
-      }
+      body { font-family: Arial, sans-serif; padding: 20px; }
+      .card { background: #f4f4f4; padding: 15px; border-radius: 8px; width: 250px; }
     </style>
   </head>
   <body>
 
-    <div id="loading">Loading data from sheet...</div>
+    <div id="loading">Loading data from Google Sheet...</div>
 
     <div class="card" id="profileCard" style="display: none;">
-      <div class="field">
-        <div class="label">Name</div>
-        <div class="value" id="userName">-</div>
-      </div>
-      <div class="field">
-        <div class="label">Rank</div>
-        <div class="value" id="userRank">-</div>
-      </div>
-      <div class="field">
-        <div class="label">Balance</div>
-        <div class="value" id="userBal">-</div>
-      </div>
+      <p><strong>Name:</strong> <span id="userName"></span></p>
+      <p><strong>Rank:</strong> <span id="userRank"></span></p>
+      <p><strong>Balance:</strong> $<span id="userBal"></span></p>
     </div>
 
     <script>
-      // Automatically fetch sheet data when HTML loads
+      // REPLACE THIS WITH YOUR DEPLOYED WEB APP URL
+      const API_URL = "https://script.google.com/macros/s/AKfycbxlbfjPRHDDcn71cixgmgR6-dGT52HwJQoHxAxKYuRoxqiegzDNCqeE2wvn6ny8YM31/exec";
+
       window.onload = function() {
-        google.script.run
-          .withSuccessHandler(renderData)
-          .getSheetData();
+        fetch(API_URL)
+          .then(response => response.json())
+          .then(data => {
+            document.getElementById('userName').textContent = data.name;
+            document.getElementById('userRank').textContent = data.rank;
+            document.getElementById('userBal').textContent = data.bal;
+
+            document.getElementById('loading').style.display = 'none';
+            document.getElementById('profileCard').style.display = 'block';
+          })
+          .catch(error => {
+            document.getElementById('loading').textContent = "Failed to load data.";
+            console.error("Error fetching data:", error);
+          });
       };
-
-      // Populate HTML elements with returned Google Sheet values
-      function renderData(data) {
-        document.getElementById('userName').textContent = data.name;
-        document.getElementById('userRank').textContent = data.rank;
-        document.getElementById('userBal').textContent = '$' + data.bal;
-
-        document.getElementById('loading').style.display = 'none';
-        document.getElementById('profileCard').style.display = 'block';
-      }
     </script>
   </body>
 </html>
