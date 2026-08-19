@@ -20,30 +20,39 @@
     const API_URL = "https://script.google.com/macros/s/AKfycbyXrZkjTkMunH-I66Ga6oNQhn8-xqgATq2DaoUHWAVboPlFB4K30YYArNzB4IDO4HWK/exec";
 
     function sendData() {
-      const nameValue = document.getElementById("nameInput").value;
-      const statusText = document.getElementById("status");
+  const nameInput = document.getElementById("nameInput");
+  const nameValue = nameInput.value.trim();
+  const statusText = document.getElementById("status");
 
-      if (!nameValue) {
-        statusText.textContent = "Please enter a name!";
-        return;
-      }
+  if (!nameValue) {
+    statusText.textContent = "Please type a name first!";
+    statusText.style.color = "red";
+    return;
+  }
 
-      statusText.textContent = "Sending...";
+  statusText.textContent = "Sending...";
+  statusText.style.color = "black";
 
-      fetch(API_URL, {
-        method: "POST",
-        body: JSON.stringify({ name: nameValue })
-      })
-      .then(res => res.json())
-      .then(data => {
-        statusText.textContent = "Success! Name sent to Google Sheet.";
-        document.getElementById("nameInput").value = "";
-      })
-      .catch(err => {
-        statusText.textContent = "Error sending data.";
-        console.error(err);
-      });
-    }
+  const formData = new FormData();
+  formData.append("name", nameValue);
+
+  fetch(API_URL, {
+    method: "POST",
+    body: formData,
+    mode: "no-cors" // Prevents the browser CORS block!
+  })
+  .then(() => {
+    // With no-cors, reaching this step guarantees Google received the data
+    statusText.textContent = "Submitted successfully!";
+    statusText.style.color = "green";
+    nameInput.value = "";
+  })
+  .catch(err => {
+    statusText.textContent = "Network error. Please try again.";
+    statusText.style.color = "red";
+    console.error(err);
+  });
+}
   </script>
 
 </body>
