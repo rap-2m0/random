@@ -1,50 +1,50 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <title>Sheet Data on GitHub</title>
-    <style>
-      body { font-family: Arial, sans-serif; padding: 20px; }
-      .card { background: #f4f4f4; padding: 15px; border-radius: 8px; width: 250px; }
-    </style>
-  </head>
-  <body>
+<head>
+  <title>Send Name to Google Sheet</title>
+  <style>
+    body { font-family: Arial, sans-serif; padding: 30px; }
+    input, button { padding: 10px; font-size: 16px; margin-top: 10px; }
+  </style>
+</head>
+<body>
 
-    <div id="loading">Loading data from Google Sheet...</div>
+  <h2>Submit Your Name</h2>
+  <input type="text" id="nameInput" placeholder="Enter your name">
+  <button onclick="sendData()">Send to Sheet</button>
 
-    <div class="card" id="profileCard" style="display: none;">
-      <p><strong>Name:</strong> <span id="userName"></span></p>
-      <p><strong>Rank:</strong> <span id="userRank"></span></p>
-      <p><strong>Balance:</strong> $<span id="userBal"></span></p>
-    </div>
+  <p id="status"></p>
 
-    <script>
-      // REPLACE THIS WITH YOUR DEPLOYED WEB APP URL
-     const API_URL = "https://script.google.com/macros/s/AKfycbxlbfjPRHDDcn71cixgmgR6-dGT52HwJQoHxAxKYuRoxqiegzDNCqeE2wvn6ny8YM31/exec";
+  <script>
+    // PASTE YOUR GOOGLE WEB APP URL HERE
+    const API_URL = "https://script.google.com/macros/s/AKfycbyl5kY3DaYKsawanY4kbY3nR3K1Ypu40PMI8_dIGDqnisTrDpUoFBUKRFUKlFCZygzt/exec";
 
-window.onload = function() {
-  fetch(API_URL, {
-    method: "GET",
-    redirect: "follow" // Forces the browser to follow Google's redirect
-  })
-    .then(response => {
-      if (!response.ok) {
-        throw new Error("Network response was not ok: " + response.statusText);
+    function sendData() {
+      const nameValue = document.getElementById("nameInput").value;
+      const statusText = document.getElementById("status");
+
+      if (!nameValue) {
+        statusText.textContent = "Please enter a name!";
+        return;
       }
-      return response.json();
-    })
-    .then(data => {
-      document.getElementById('userName').textContent = data.name;
-      document.getElementById('userRank').textContent = data.rank;
-      document.getElementById('userBal').textContent = data.bal;
 
-      document.getElementById('loading').style.display = 'none';
-      document.getElementById('profileCard').style.display = 'block';
-    })
-    .catch(error => {
-      document.getElementById('loading').textContent = "Failed to load data. Check browser console (F12) for details.";
-      console.error("Error fetching data:", error);
-    });
-};
-    </script>
-  </body>
+      statusText.textContent = "Sending...";
+
+      fetch(API_URL, {
+        method: "POST",
+        body: JSON.stringify({ name: nameValue })
+      })
+      .then(res => res.json())
+      .then(data => {
+        statusText.textContent = "Success! Name sent to Google Sheet.";
+        document.getElementById("nameInput").value = "";
+      })
+      .catch(err => {
+        statusText.textContent = "Error sending data.";
+        console.error(err);
+      });
+    }
+  </script>
+
+</body>
 </html>
